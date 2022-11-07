@@ -20,3 +20,13 @@ class Auction(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+class Bid(models.Model):
+    item = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    purchaser = models.ForeignKey(User, on_delete=models.CASCADE)
+    price = models.FloatField()
+
+class Comment(models.Model):
+    item = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    purchaser = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.TextField()
