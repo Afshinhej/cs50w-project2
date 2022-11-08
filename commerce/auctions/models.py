@@ -16,7 +16,7 @@ class Auction(models.Model):
     description = models.TextField()
     starting_bid = models.FloatField() # maybe it is beter to use models.IntegerField
     imageURL = models.URLField()
-    category = models.ManyToManyField(Category, blank=True, related_name="category")
+    category = models.ManyToManyField(Category, blank=True)
 
     def __str__(self):
         return f"{self.title}"

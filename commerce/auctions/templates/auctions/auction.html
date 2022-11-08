@@ -4,6 +4,14 @@
     {% if auction %}
         <h1>{{ auction.title }}:</h1>
             {{ auction.description }}
+            <ul class="nav">
+                {% for cat in auction.category.all %}    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'create' %}">{{ cat }}</a>
+                    </li>
+                {% endfor %}    
+            </ul>
+            
     {% endif %}
 
     {% if message %}
