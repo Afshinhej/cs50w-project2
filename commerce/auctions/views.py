@@ -73,3 +73,11 @@ def auction(request, auction_title):
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
     })
+
+def create(request):
+    
+    return render(request, "auctions/create.html")
+
+def watchlist(request):
+    
+    return render(request, "auctions/watchlist.html")
