@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Auction
+from .forms import AuctionForm
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -75,8 +76,22 @@ def auction(request, auction_title):
     })
 
 def create(request):
-    
-    return render(request, "auctions/create.html")
+    if request.method == "POST":
+        form = AuctionForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            starting_bid = form.cleaned_data["starting_bid"]
+            category = form.cleaned_data["category"]
+            imageURL = form.cleaned_data["imageURL"]
+            seller = request.user
+            new_auction = Auction(title=title,description=description,starting_bid=starting_bid, imageURL=imageURL, seller=seller)
+            new_auction.save()
+            
+    form = AuctionForm()    
+    return render(request, "auctions/create.html",{
+        "form": form
+    })
 
 def watchlist(request):
     
