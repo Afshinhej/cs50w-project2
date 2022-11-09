@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction
+from .models import User, Auction, Category
 from .forms import AuctionForm
 
 def index(request):
@@ -82,11 +82,13 @@ def create(request):
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
             starting_bid = form.cleaned_data["starting_bid"]
-            category = form.cleaned_data["category"]
+            category_names = form.cleaned_data["category"]
+            category_list = list(Category.objects.get(name = category_name).id for category_name in category_names)
             imageURL = form.cleaned_data["imageURL"]
             seller = request.user
             new_auction = Auction(title=title,description=description,starting_bid=starting_bid, imageURL=imageURL, seller=seller)
             new_auction.save()
+            new_auction.category.add(*category_list)
             
     form = AuctionForm()    
     return render(request, "auctions/create.html",{

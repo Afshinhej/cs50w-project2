@@ -4,7 +4,7 @@ from .models import Category
 categorys = list(category for category in Category.objects.all())
 category_choices = []
 for _ in categorys:
-    category_choices.append((str(_.name),_))
+    category_choices.append((_,str(_.name)))
 
 class AuctionForm(forms.Form):
     title = forms.CharField(label='Auction title', max_length=64)
