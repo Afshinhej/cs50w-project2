@@ -2,16 +2,24 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    <ul>
-        {% for auction in auctions %}
-        <li>
-            
-            <a href="{% url 'auction' auction.title %}"> {{ auction.title }} </a>
-            
-        </li>
-        {% empty %}
-            No auction listings.
-        {% endfor %}
-    </ul>
+   {% for auction in auctions %}
+        <div style="border: solid gray; padding: 20px; margin: 20px;">
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'auction' auction.title %}"><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></a>
+                </div>
+                <div class="col">
+                    <p><h3> {{ auction.title }} </h3></p>
+                    <p>Price : € {{ auction.starting_bid }} </p>
+                    {% if auction.description %}
+                        <p> {{ auction.description }} </p>
+                    {% endif %}
+                    <p>created date: {{ auction.seller }}</p>
+                </div>
+            </div>
+        </div>    
+    {% empty %}
+        No auction listings.
+    {% endfor %}
+    
 {% endblock %}
