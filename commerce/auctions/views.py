@@ -64,13 +64,12 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def auction(request, auction_title):
-    existing_titles = list(auction.title for auction in Auction.objects.all())
-    if auction_title.upper() in list(map(str.upper,existing_titles)):
+def auction(request, auction_pk):
+    existing_pk = list(auction.pk for auction in Auction.objects.all())
+    if auction_pk in existing_pk:
         return render(request, "auctions/auction.html",{
-            "auction": Auction.objects.get(title__iexact=auction_title)
+            "auction": Auction.objects.get(pk=auction_pk)
         })
-
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
     })

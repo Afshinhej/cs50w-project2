@@ -6,11 +6,11 @@
         <div style="border: solid gray; padding: 20px; margin: 20px;">
             <div class="row">
                 <div class="col">
-                    <a href="{% url 'auction' auction.title %}"><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></a>
+                    <a href="{% url 'auction' auction.pk %}"><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></a>
                 </div>
                 <div class="col">
                     <p><h3> {{ auction.title }} </h3></p>
-                    <p>Price : € {{ auction.starting_bid }} </p>
+                    <p><h3>Price : € {{ auction.starting_bid }} </h3></p>
                     {% if auction.description %}
                         <p> {{ auction.description }} </p>
                     {% endif %}
