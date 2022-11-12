@@ -24,7 +24,7 @@ class Auction(models.Model):
 class Bid(models.Model):
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)
     purchaser = models.ForeignKey(User, on_delete=models.CASCADE)
-    price = models.FloatField()
+    bid = models.FloatField()
 
 class Comment(models.Model):
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)

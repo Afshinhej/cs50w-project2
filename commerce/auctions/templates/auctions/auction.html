@@ -11,9 +11,20 @@
             <form action="{% url 'auction' auction.pk %}" method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <input type="hidden" name="item_pk" value="{{ auction.pk }}">
                 <input type="submit" value="Add">
             </form>
         </p>
+        <ul>
+            
+            {% for bid in bids%}
+            <li>
+                {{ bid.purchaser }} : € {{ bid.bid }}
+            </li>    
+            {%endfor%}
+            
+        </ul>
+        
 
         <h4>Details:</h4>
         <p>Listed by: {{ auction.seller.username }}</p>

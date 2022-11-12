@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Category
+from .models import User, Auction, Category, Bid
 from .forms import AuctionForm, BidingForm
 
 def index(request):
@@ -69,17 +69,17 @@ def auction(request, auction_pk):
         form = BidingForm(request.POST)
         if form.is_valid():
             bid = float(form.cleaned_data["bid"])
-            print(50*"↓")
-            print(50*"↓")
-            print(bid)
-            print(50*"↑")
-            print(50*"↑")
+            purchaser = request.user
+            item_pk = request.POST['item_pk']
+            item = Auction.objects.get(pk=item_pk)
+            Bid(bid=bid, purchaser=purchaser, item=item).save()
     
     existing_pk = list(auction.pk for auction in Auction.objects.all())
     if auction_pk in existing_pk:
         return render(request, "auctions/auction.html",{
             "auction": Auction.objects.get(pk=auction_pk),
-            "form": BidingForm
+            "form": BidingForm,
+            "bids": Bid.objects.filter(item=Auction.objects.get(pk=auction_pk))
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
