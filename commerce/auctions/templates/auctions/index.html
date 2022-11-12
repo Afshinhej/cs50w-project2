@@ -10,7 +10,13 @@
                 </div>
                 <div class="col">
                     <p><h3> {{ auction.title }} </h3></p>
+                    
+                    {% if auction.max_bid %}
+                    <p><h3>Price : € {{ auction.max_bid }} </h3></p>
+                    {% else %}
                     <p><h3>Price : € {{ auction.starting_bid }} </h3></p>
+                    {% endif %}
+                    
                     {% if auction.description %}
                         <p> {{ auction.description }} </p>
                     {% endif %}

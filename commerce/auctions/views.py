@@ -76,10 +76,12 @@ def auction(request, auction_pk):
     
     existing_pk = list(auction.pk for auction in Auction.objects.all())
     if auction_pk in existing_pk:
+        auction = Auction.objects.get(pk=auction_pk)
         return render(request, "auctions/auction.html",{
-            "auction": Auction.objects.get(pk=auction_pk),
+            "auction": auction,
             "form": BidingForm,
-            "bids": Bid.objects.filter(item=Auction.objects.get(pk=auction_pk))
+            "price": max(auction.max_bid(),auction.starting_bid),
+            "count_bid": auction.count_bid()
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"

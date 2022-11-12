@@ -4,10 +4,10 @@
     {% if auction %}
         <h1>Listing: {{ auction.title }}</h1>
         <p><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></p>
-        <p>Price : € {{ auction.starting_bid }}</p>
+        <p>Price : € {{ price }}</p>
         <p>{{ auction.description }}</p>
         
-        <p> 2 bid(s) so far. Your bid is the current bid.
+        <p> {{ count_bid }} bid(s) so far. Your bid is the current bid.
             <form action="{% url 'auction' auction.pk %}" method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
@@ -15,17 +15,6 @@
                 <input type="submit" value="Add">
             </form>
         </p>
-        <ul>
-            
-            {% for bid in bids%}
-            <li>
-                {{ bid.purchaser }} : € {{ bid.bid }}
-            </li>    
-            {%endfor%}
-            
-        </ul>
-        
-
         <h4>Details:</h4>
         <p>Listed by: {{ auction.seller.username }}</p>
         <div class="nav"><p class="nav-item">Categories:</p> 
