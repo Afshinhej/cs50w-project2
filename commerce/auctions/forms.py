@@ -12,4 +12,7 @@ class AuctionForm(forms.Form):
     starting_bid = forms.FloatField()
     category = forms.MultipleChoiceField(choices=category_choices)
     imageURL = forms.URLField(label="URL for image")
+
+class BidingForm(forms.Form):
+    bid = forms.FloatField(label="")
     

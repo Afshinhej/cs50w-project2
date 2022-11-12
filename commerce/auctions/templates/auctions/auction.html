@@ -2,16 +2,30 @@
 
 {% block body %}
     {% if auction %}
-        <h1>{{ auction.title }}:</h1>
-            {{ auction.description }}
+        <h1>Listing: {{ auction.title }}</h1>
+        <p><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></p>
+        <p>Price : € {{ auction.starting_bid }}</p>
+        <p>{{ auction.description }}</p>
+        
+        <p> 2 bid(s) so far. Your bid is the current bid.
+            <form action="{% url 'auction' auction.pk %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Add">
+            </form>
+        </p>
+
+        <h4>Details:</h4>
+        <p>Listed by: {{ auction.seller.username }}</p>
+        <div class="nav"><p class="nav-item">Categories:</p> 
             <ul class="nav">
                 {% for cat in auction.category.all %}    
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'create' %}">{{ cat }}</a>
+                    <li>
+                        <a style="padding-left: 20px;" href="{% url 'create' %}">{{ cat }}</a>
                     </li>
                 {% endfor %}    
             </ul>
-            
+        </div>    
     {% endif %}
 
     {% if message %}

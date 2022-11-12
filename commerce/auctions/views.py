@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Auction, Category
-from .forms import AuctionForm
+from .forms import AuctionForm, BidingForm
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -65,10 +65,21 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def auction(request, auction_pk):
+    if request.method == "POST":
+        form = BidingForm(request.POST)
+        if form.is_valid():
+            bid = float(form.cleaned_data["bid"])
+            print(50*"↓")
+            print(50*"↓")
+            print(bid)
+            print(50*"↑")
+            print(50*"↑")
+    
     existing_pk = list(auction.pk for auction in Auction.objects.all())
     if auction_pk in existing_pk:
         return render(request, "auctions/auction.html",{
-            "auction": Auction.objects.get(pk=auction_pk)
+            "auction": Auction.objects.get(pk=auction_pk),
+            "form": BidingForm
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
