@@ -98,7 +98,7 @@ def create(request):
             category_list = list(Category.objects.get(name = category_name).id for category_name in category_names)
             imageURL = form.cleaned_data["imageURL"]
             seller = request.user
-            new_auction = Auction(title=title,description=description,starting_bid=starting_bid, imageURL=imageURL, seller=seller)
+            new_auction = Auction(title=title, description=description, starting_bid=starting_bid, imageURL=imageURL, seller=seller)
             new_auction.save()
             new_auction.category.add(*category_list)
             
@@ -109,7 +109,9 @@ def create(request):
 
 def watchlist(request):
     
-    return render(request, "auctions/watchlist.html")
+    return render(request, "auctions/watchlist.html",{
+        "auctions":Auction.objects.all()
+    })
 
 def categoryindex(request):
     return render(request, "auctions/categoryindex.html",{
