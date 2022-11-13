@@ -1,7 +1,10 @@
 {% extends "auctions/layout.html" %}
 
+
+
 {% block body %}
-    <h2>Active Listings</h2>
+    {% block sub_body %}
+    {% endblock %}    
    {% for auction in auctions %}
         <div style="border: solid gray; padding: 20px; margin: 20px;">
             <div class="row">

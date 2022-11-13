@@ -102,7 +102,7 @@ def create(request):
             new_auction.save()
             new_auction.category.add(*category_list)
             
-    form = AuctionForm()    
+    form = AuctionForm()
     return render(request, "auctions/create.html",{
         "form": form
     })
@@ -110,3 +110,14 @@ def create(request):
 def watchlist(request):
     
     return render(request, "auctions/watchlist.html")
+
+def categoryindex(request):
+    return render(request, "auctions/categoryindex.html",{
+        "categorys": Category.objects.all()
+    })
+    
+def category(request, category_pk):
+    return render(request, "auctions/category.html",{
+        "category": Category.objects.get(pk=category_pk),
+        "auctions": Auction.objects.filter(category=Category.objects.get(pk=category_pk))
+    })

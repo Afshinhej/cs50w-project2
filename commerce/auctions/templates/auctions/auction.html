@@ -21,7 +21,7 @@
             <ul class="nav">
                 {% for cat in auction.category.all %}    
                     <li>
-                        <a style="padding-left: 20px;" href="{% url 'create' %}">{{ cat }}</a>
+                        <a style="padding-left: 20px;" href="{% url 'category' cat.pk %}">{{ cat }}</a>
                     </li>
                 {% endfor %}    
             </ul>
