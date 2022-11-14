@@ -3,6 +3,12 @@
 {% block body %}
     {% if auction %}
         <h1>Listing: {{ auction.title }}</h1>
+                
+        <form action="{% url 'auction' auction.pk %}" method="post">
+            {% csrf_token %}
+            {{ watcllistForm }}
+        </form>
+        
         <p><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></p>
         <p>Price : € {{ price }}</p>
         <p>{{ auction.description }}</p>
@@ -12,7 +18,7 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <input type="hidden" name="item_pk" value="{{ auction.pk }}">
-                <input type="submit" value="Add">
+                <input type="submit" value="Place Bid">
             </form>
         </p>
         <h4>Details:</h4>

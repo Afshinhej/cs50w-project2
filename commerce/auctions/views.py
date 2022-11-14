@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Auction, Category, Bid
-from .forms import AuctionForm, BidingForm
+from .forms import AuctionForm, BidingForm, WatcllistForm
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -66,13 +66,22 @@ def register(request):
 
 def auction(request, auction_pk):
     if request.method == "POST":
-        form = BidingForm(request.POST)
-        if form.is_valid():
-            bid = float(form.cleaned_data["bid"])
-            purchaser = request.user
-            item_pk = request.POST['item_pk']
-            item = Auction.objects.get(pk=item_pk)
-            Bid(bid=bid, purchaser=purchaser, item=item).save()
+        if "is_it_watchlist" in request.POST:
+            request.user.watchlist.add(Auction.objects.get(pk=auction_pk))                
+        elif "bid" in request.POST:
+            form = BidingForm(request.POST)
+            if form.is_valid():
+                bid = float(form.cleaned_data["bid"])
+                purchaser = request.user
+                item_pk = request.POST['item_pk']
+                item = Auction.objects.get(pk=item_pk)
+                Bid(bid=bid, purchaser=purchaser, item=item).save()
+        else:
+            request.user.watchlist.remove(Auction.objects.get(pk=auction_pk))
+    if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
+        watcllistForm = WatcllistForm({'is_it_watchlist': ['on']})
+    else:
+        watcllistForm = WatcllistForm()
     
     existing_pk = list(auction.pk for auction in Auction.objects.all())
     if auction_pk in existing_pk:
@@ -80,8 +89,9 @@ def auction(request, auction_pk):
         return render(request, "auctions/auction.html",{
             "auction": auction,
             "form": BidingForm,
-            "price": max(auction.max_bid(),auction.starting_bid),
-            "count_bid": auction.count_bid()
+            "price": max(auction.max_bid(), auction.starting_bid),
+            "count_bid": auction.count_bid(),
+            "watcllistForm": watcllistForm
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
@@ -108,10 +118,10 @@ def create(request):
     })
 
 def watchlist(request):
-    
-    return render(request, "auctions/watchlist.html",{
-        "auctions":Auction.objects.all()
-    })
+    if request.method == "GET":
+        return render(request, "auctions/watchlist.html",{
+            "auctions":request.user.watchlist.all()
+        })
 
 def categoryindex(request):
     return render(request, "auctions/categoryindex.html",{

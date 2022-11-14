@@ -15,4 +15,6 @@ class AuctionForm(forms.Form):
 
 class BidingForm(forms.Form):
     bid = forms.FloatField(label="")
-    
+
+class WatcllistForm(forms.Form):
+    is_it_watchlist = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onchange': 'submit();'}))
