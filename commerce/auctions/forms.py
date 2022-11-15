@@ -10,8 +10,8 @@ class AuctionForm(forms.Form):
     title = forms.CharField(label='Auction title', max_length=64)
     description = forms.CharField(widget=forms.Textarea, label='Description')
     starting_bid = forms.FloatField()
-    category = forms.MultipleChoiceField(choices=category_choices)
-    imageURL = forms.URLField(label="URL for image")
+    category = forms.MultipleChoiceField(choices=category_choices, required=False)
+    imageURL = forms.URLField(label="URL for image", required=False)
 
 class BidingForm(forms.Form):
     bid = forms.FloatField(label="")

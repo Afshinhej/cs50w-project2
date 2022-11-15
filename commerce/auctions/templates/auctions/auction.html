@@ -9,8 +9,10 @@
             {{ watcllistForm }}
         </form>
         
-        <p><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></p>
-        <p>Price : € {{ price }}</p>
+        {% if auction.imageURL %}
+            <p><img src="{{ auction.imageURL }}" alt="Auction picture" style="width:auto;height:256px"></p>
+        {% endif %}
+            <p>Price : € {{ price }}</p>
         <p>{{ auction.description }}</p>
         
         <p> {{ count_bid }} bid(s) so far. Your bid is the current bid.
@@ -23,12 +25,14 @@
         </p>
         <h4>Details:</h4>
         <p>Listed by: {{ auction.seller.username }}</p>
-        <div class="nav"><p class="nav-item">Categories:</p> 
+        <div class="nav"><p class="nav-item">Categories: </p> 
             <ul class="nav">
                 {% for cat in auction.category.all %}    
                     <li>
                         <a style="padding-left: 20px;" href="{% url 'category' cat.pk %}">{{ cat }}</a>
                     </li>
+                {% empty %}
+                    <li style="padding-left: 20px;"> No category </li>
                 {% endfor %}    
             </ul>
         </div>    
