@@ -65,6 +65,7 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def auction(request, auction_pk):
+    caution = None
     if request.method == "POST":
         if "is_it_watchlist" in request.POST:
             request.user.watchlist.add(Auction.objects.get(pk=auction_pk))                
@@ -75,7 +76,10 @@ def auction(request, auction_pk):
                 purchaser = request.user
                 item_pk = request.POST['item_pk']
                 item = Auction.objects.get(pk=item_pk)
-                Bid(bid=bid, purchaser=purchaser, item=item).save()
+                if item.max_bid()<bid:
+                    Bid(bid=bid, purchaser=purchaser, item=item).save()
+                else:
+                    caution = "The bid must be higher than the current price!"
         else:
             request.user.watchlist.remove(Auction.objects.get(pk=auction_pk))
     if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
@@ -91,7 +95,8 @@ def auction(request, auction_pk):
             "form": BidingForm,
             "price": max(auction.max_bid(), auction.starting_bid),
             "count_bid": auction.count_bid(),
-            "watcllistForm": watcllistForm
+            "watcllistForm": watcllistForm,
+            "caution": caution
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"

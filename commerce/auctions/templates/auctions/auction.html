@@ -21,6 +21,9 @@
                 {{ form.as_p }}
                 <input type="hidden" name="item_pk" value="{{ auction.pk }}">
                 <input type="submit" value="Place Bid">
+                {% if caution %}
+                    <text> {{ caution }} </text>
+                {% endif %}
             </form>
         </p>
         <h4>Details:</h4>
