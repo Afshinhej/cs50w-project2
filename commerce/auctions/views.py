@@ -82,10 +82,13 @@ def auction(request, auction_pk):
                     caution = "The bid must be higher than the current price!"
         else:
             request.user.watchlist.remove(Auction.objects.get(pk=auction_pk))
-    if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
-        watcllistForm = WatcllistForm({'is_it_watchlist': ['on']})
+    if request.user.is_authenticated:
+        if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
+            watcllistForm = WatcllistForm({'is_it_watchlist': ['on']})
+        else:
+            watcllistForm = WatcllistForm()
     else:
-        watcllistForm = WatcllistForm()
+        watcllistForm = None
     
     existing_pk = list(auction.pk for auction in Auction.objects.all())
     if auction_pk in existing_pk:
