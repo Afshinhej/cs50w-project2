@@ -4,8 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Category, Bid
-from .forms import AuctionForm, BidingForm, WatcllistForm
+from .models import User, Auction, Category, Bid, Comment
+from .forms import AuctionForm, BidingForm, WatcllistForm, CommentForm
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -99,7 +99,9 @@ def auction(request, auction_pk):
             "price": max(auction.max_bid(), auction.starting_bid),
             "count_bid": auction.count_bid(),
             "watcllistForm": watcllistForm,
-            "caution": caution
+            "caution": caution,
+            "comments": Comment.objects.filter(item=auction),
+            "CommentForm": CommentForm()
         })
     return render(request, "auctions/auction.html",{
         'message':"No data available!"
@@ -141,3 +143,13 @@ def category(request, category_pk):
         "category": Category.objects.get(pk=category_pk),
         "auctions": Auction.objects.filter(category=Category.objects.get(pk=category_pk))
     })
+    
+def comment(request, auction_pk):
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        item_pk = request.POST['item_pk']
+        purchaser = request.user
+        description = request.POST['description']
+        topic = request.POST['topic']
+        Comment(topic=topic, purchaser=purchaser, description=description, item=Auction.objects.get(pk=item_pk)).save()
+    return HttpResponseRedirect(reverse("auction", args=(auction_pk,)))

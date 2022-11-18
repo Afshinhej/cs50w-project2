@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category
+from .models import Category, Comment
 
 categorys = list(category for category in Category.objects.all())
 category_choices = []
@@ -18,3 +18,8 @@ class BidingForm(forms.Form):
 
 class WatcllistForm(forms.Form):
     is_it_watchlist = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onchange': 'submit();'}))
+    
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['item', 'purchaser']

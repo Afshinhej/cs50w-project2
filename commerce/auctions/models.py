@@ -39,4 +39,5 @@ class Bid(models.Model):
 class Comment(models.Model):
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)
     purchaser = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.CharField(max_length=64, blank=True)
     description = models.TextField()

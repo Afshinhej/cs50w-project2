@@ -34,21 +34,39 @@
         <div class="nav"><p class="nav-item">Categories: </p> 
             <ul class="nav">
                 {% for cat in auction.category.all %}    
-                    <li>
-                        <a style="padding-left: 20px;" href="{% url 'category' cat.pk %}">{{ cat }}</a>
-                    </li>
+                <li>
+                    <a style="padding-left: 20px;" href="{% url 'category' cat.pk %}">{{ cat }}</a>
+                </li>
                 {% empty %}
-                    <li style="padding-left: 20px;"> No category </li>
+                <li style="padding-left: 20px;"> No category </li>
                 {% endfor %}    
             </ul>
         </div>    
-    {% endif %}
-
-    {% if message %}
+        {% endif %}
+        
+        {% if message %}
         <h1>Error:</h1>
-            {{ message }}
-    {% endif %}
-
-
-
+        {{ message }}
+        {% endif %}
+        
+        <h4>Comments:</h4>
+        
+        {% for comment in comments %}
+            <div style="border: solid gray; padding: 20px; margin: 20px;">
+                <h5>{{ comment.topic }}: </h5>
+                <p>{{ comment.description }}</p>
+            </div>
+                {% empty %}
+            No comments
+        {% endfor %}
+        
+        {% if user.is_authenticated %}
+            <h4>Adding New Comment:</h4>
+            <form action="{% url 'comment' auction.pk %}" method="post">
+                {% csrf_token %}
+                {{ CommentForm.as_p }}
+                <input type="hidden" name="item_pk" value="{{ auction.pk }}">
+                <input type="submit" value="Add Comment">
+            </form>
+        {% endif %}
 {% endblock %}
