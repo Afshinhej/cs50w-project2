@@ -10,13 +10,17 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
 class Auction(models.Model):
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seller')
     title = models.CharField(max_length=64)
     description = models.TextField()
     starting_bid = models.FloatField()
     imageURL = models.URLField()
     category = models.ManyToManyField(Category, blank=True)
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    has_winner = models.BooleanField(default=False)
+    
 
     def max_bid(self):
         if Bid.objects.filter(item=self):

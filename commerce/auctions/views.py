@@ -79,6 +79,15 @@ def auction(request, auction_pk):
             else:
                 caution = "The bid must be higher than the current price!"
 
+    if Auction.objects.get(pk=auction_pk).has_winner:
+        if request.user == Auction.objects.get(pk=auction_pk).winner:
+            message= 'You are the winner!'
+        else:
+            message = f"The auction is closed."
+        return render(request, "auctions/auction_winner.html",{
+                'message': message
+            })
+    
     if request.user.is_authenticated:
         if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
             watcllistForm = WatcllistForm({'is_it_watchlist': ['on']})
@@ -161,3 +170,16 @@ def comment(request, auction_pk):
         topic = request.POST['topic']
         Comment(topic=topic, purchaser=purchaser, description=description, item=Auction.objects.get(pk=item_pk)).save()
     return HttpResponseRedirect(reverse("auction", args=(auction_pk,)))
+
+@login_required(login_url='login')
+def winner(request):
+    if request.method == "POST":
+        auction_pk = request.POST['auction_pk']
+        auction = Auction.objects.get(pk=auction_pk)
+        max_bid = auction.max_bid()
+        winner_bid = Bid.objects.get(item=auction, bid=max_bid)
+        winner_purchaser = winner_bid.purchaser 
+        auction.has_winner = True
+        auction.winner = winner_purchaser
+        auction.save() 
+        return HttpResponseRedirect(reverse("auction", args=(auction_pk,)))

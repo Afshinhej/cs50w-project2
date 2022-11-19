@@ -5,11 +5,23 @@
         <h1>Listing: {{ auction.title }}</h1>
                 
         {% if user.is_authenticated %}
-            <form action="{% url 'watchlist' %}" method="post">
-                {% csrf_token %}
-                {{ watcllistForm }}
-                <input type="hidden" name="auction_pk" value="{{ auction.pk }}">
-            </form>
+            <div>
+                {% if auction.seller == request.user and auction.count_bid > 0 %}
+                    You can close the bid and highest bid will be the winner.
+                    <form action="{% url 'winner' %}" method='post'>
+                        {% csrf_token %}
+                        <input type="hidden" name="auction_pk" value="{{ auction.pk }}">
+                        <input type="submit" value="Close the bid.">         
+                    </form>
+                {% endif %}
+            </div>
+            <div>
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    {{ watcllistForm }}
+                    <input type="hidden" name="auction_pk" value="{{ auction.pk }}">
+                </form>
+            </div>
         {% endif %}
         
         {% if auction.imageURL %}
@@ -18,16 +30,19 @@
             <p>Price : € {{ price }}</p>
         <p>{{ auction.description }}</p>
         {% if user.is_authenticated %}
-            <p> {{ count_bid }} bid(s) so far. Your bid is the current bid.
-                <form action="{% url 'auction' auction.pk %}" method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="hidden" name="item_pk" value="{{ auction.pk }}">
-                    <input type="submit" value="Place Bid">
-                    {% if caution %}
-                        <text> {{ caution }} </text>
-                    {% endif %}
-                </form>
+            <p> {{ count_bid }} bid(s) so far. 
+                {% if request.user != auction.seller %}
+                        Your bid is the current bid.
+                    <form action="{% url 'auction' auction.pk %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="item_pk" value="{{ auction.pk }}">
+                        <input type="submit" value="Place Bid">
+                        {% if caution %}
+                            <text> {{ caution }} </text>
+                        {% endif %}
+                    </form>
+                {% endif %}
             </p>
         {% endif %}
         <h4>Details:</h4>
