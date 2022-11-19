@@ -5,9 +5,10 @@
         <h1>Listing: {{ auction.title }}</h1>
                 
         {% if user.is_authenticated %}
-            <form action="{% url 'auction' auction.pk %}" method="post">
+            <form action="{% url 'watchlist' %}" method="post">
                 {% csrf_token %}
                 {{ watcllistForm }}
+                <input type="hidden" name="auction_pk" value="{{ auction.pk }}">
             </form>
         {% endif %}
         

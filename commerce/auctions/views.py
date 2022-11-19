@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -67,21 +68,17 @@ def register(request):
 def auction(request, auction_pk):
     caution = None
     if request.method == "POST":
-        if "is_it_watchlist" in request.POST:
-            request.user.watchlist.add(Auction.objects.get(pk=auction_pk))                
-        elif "bid" in request.POST:
-            form = BidingForm(request.POST)
-            if form.is_valid():
-                bid = float(form.cleaned_data["bid"])
-                purchaser = request.user
-                item_pk = request.POST['item_pk']
-                item = Auction.objects.get(pk=item_pk)
-                if item.max_bid()<bid:
-                    Bid(bid=bid, purchaser=purchaser, item=item).save()
-                else:
-                    caution = "The bid must be higher than the current price!"
-        else:
-            request.user.watchlist.remove(Auction.objects.get(pk=auction_pk))
+        form = BidingForm(request.POST)
+        if form.is_valid():
+            bid = float(form.cleaned_data["bid"])
+            purchaser = request.user
+            item_pk = request.POST['item_pk']
+            item = Auction.objects.get(pk=item_pk)
+            if item.max_bid()<bid:
+                Bid(bid=bid, purchaser=purchaser, item=item).save()
+            else:
+                caution = "The bid must be higher than the current price!"
+
     if request.user.is_authenticated:
         if Auction.objects.get(pk=auction_pk) in request.user.watchlist.all():
             watcllistForm = WatcllistForm({'is_it_watchlist': ['on']})
@@ -107,6 +104,7 @@ def auction(request, auction_pk):
         'message':"No data available!"
     })
 
+@login_required(login_url='login')
 def create(request):
     if request.method == "POST":
         form = AuctionForm(request.POST)
@@ -127,11 +125,20 @@ def create(request):
         "form": form
     })
 
+@login_required(login_url='login')
 def watchlist(request):
-    if request.method == "GET":
-        return render(request, "auctions/watchlist.html",{
-            "auctions":request.user.watchlist.all()
-        })
+    if request.method == "POST":
+        auction = Auction.objects.get(pk=request.POST['auction_pk'])
+        if "is_it_watchlist" in request.POST:
+            request.user.watchlist.add(auction)       
+        else:
+            request.user.watchlist.remove(auction)
+        
+        return HttpResponseRedirect(reverse("auction", args=(auction.pk,)))
+    
+    return render(request, "auctions/watchlist.html",{
+        "auctions":request.user.watchlist.all()
+    })
 
 def categoryindex(request):
     return render(request, "auctions/categoryindex.html",{
@@ -144,6 +151,7 @@ def category(request, category_pk):
         "auctions": Auction.objects.filter(category=Category.objects.get(pk=category_pk))
     })
     
+@login_required(login_url='login')
 def comment(request, auction_pk):
     form = CommentForm(request.POST or None)
     if form.is_valid():
